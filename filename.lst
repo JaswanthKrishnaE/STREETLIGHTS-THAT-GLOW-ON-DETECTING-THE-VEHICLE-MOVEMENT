@@ -1,0 +1,136 @@
+C51 COMPILER V9.60.0.0   FILENAME                                                          11/11/2022 10:39:36 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE FILENAME
+OBJECT MODULE PLACED IN .\Objects\filename.obj
+COMPILER INVOKED BY: D:\softwares\8051\C51\BIN\C51.EXE filename.C OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Li
+                    -stings\filename.lst) TABS(2) OBJECT(.\Objects\filename.obj)
+
+line level    source
+
+   1          #include <reg52.h>
+   2          #define lcd P3
+   3          #define dat P2
+   4          sbit rs=P1^6;
+   5          sbit e=P1^7;
+   6          
+   7          void delay(int);
+   8          void display(unsigned char);
+   9          void cmd(unsigned char);
+  10          void init(void);
+  11          void string(char*);
+  12          void intro(void);
+  13          char i=0;
+  14          
+  15          void delay(int d)
+  16          {
+  17   1        unsigned char i=0;
+  18   1        for(;d>0;d--)
+  19   1        { 
+  20   2          for(i=250; i>0; i--);
+  21   2          for(i=248; i>0; i--);
+  22   2        }
+  23   1      }
+  24          void display(unsigned char c){
+  25   1        lcd = c ; 
+  26   1        rs = 1;
+  27   1        e = 1;
+  28   1        delay(10);
+  29   1        e=0;
+  30   1      }
+  31          void string(char *c)
+  32          {
+  33   1        while(*c){
+  34   2          display(*c++);
+  35   2        }
+  36   1      }
+  37          void init(void){
+  38   1        cmd(0x38); // Configure the LCD in 8-bit mode, 2 line and 5×7 font
+  39   1        cmd(0x01);  // Clear display screen
+  40   1        cmd(0x0C);  // Display On and Cursor Off
+  41   1        cmd(0x80); // Set cursor position to 1st line, 1st column
+  42   1      }
+  43          void intro(void){
+  44   1        string("Electronics" );
+  45   1        cmd(0xc0);
+  46   1        string("    Hub    ");
+  47   1        delay(2000);
+  48   1        cmd(0x01);
+  49   1        string("   Digital   ");
+  50   1        cmd(0xc0);
+  51   1        string("    Voltmeter   ");
+  52   1        delay(2000);
+  53   1        cmd(0x01);
+  54   1        cmd(0x08);
+C51 COMPILER V9.60.0.0   FILENAME                                                          11/11/2022 10:39:36 PAGE 2   
+
+  55   1      }
+  56          
+  57          void main()
+  58          {
+  59   1        unsigned int temp=0;
+  60   1        unsigned int temp1=0;
+  61   1        float val=0.0;
+  62   1        
+  63   1        init();
+  64   1        intro();
+  65   1        dat=0xFF;
+  66   1        while(1)
+  67   1        {
+  68   2          if(i==0)
+  69   2          {
+  70   3            string(" Volts - ");
+  71   3            i++;
+  72   3          }
+  73   2          val = dat*0.02;
+  74   2          val = val/0.2;
+  75   2          cmd(0x89);
+  76   2          if((val>=1.0) && (val<10.0))
+  77   2          {
+  78   3            display(' ');
+  79   3            temp=val*1000;
+  80   3            temp1=((temp/1000)+48);
+  81   3            display(temp1);
+  82   3            display('.');
+  83   3            temp1 = (((temp/100)%10)+48);
+  84   3            display(temp1);
+  85   3          }
+  86   2          else if((val>=10.0) && (val<100.0)){
+  87   3            temp=val*100;
+  88   3            temp1=((temp/1000)+48);
+  89   3            display(temp1);
+  90   3            temp1=(((temp/1000)%10)+48);
+  91   3            display(temp1);
+  92   3            display('.');
+  93   3            temp1=(((temp/10)%10)+48);
+  94   3            display(temp1);
+  95   3          }
+  96   2          else
+  97   2          {
+  98   3            display(' ');
+  99   3            string("0.0");
+ 100   3          }
+ 101   2          delay(1000);
+ 102   2        }
+ 103   1        while(1);
+ 104   1      }
+ 105              
+ 106            
+ 107              
+ 108              
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    533    ----
+   CONSTANT SIZE    =     69    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1      11
+C51 COMPILER V9.60.0.0   FILENAME                                                          11/11/2022 10:39:36 PAGE 3   
+
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
